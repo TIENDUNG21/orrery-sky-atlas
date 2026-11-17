@@ -274,7 +274,9 @@ SkyFrame layoutFrame({
   }
   if (layers.constellationNames) {
     for (final (c, centroid) in field.centroids) {
-      final p = projection.project(scene.enuOfJ2000(centroid));
+      final enu = scene.enuOfJ2000(centroid);
+      if (layers.ground && enu.z < 0) continue;
+      final p = projection.project(enu);
       if (p == null) continue;
       final text = c.name.toUpperCase();
       final w = _labelWidth(text, LabelKind.constellation);
@@ -291,7 +293,8 @@ SkyFrame layoutFrame({
             .where(
               (s) =>
                   stars[s.index].properName != null &&
-                  stars[s.index].vmag <= labelLimit,
+                  stars[s.index].vmag <= labelLimit &&
+                  !(layers.ground && scene.starVector(s.index).z < 0),
             )
             .toList()
           ..sort((a, b) => stars[a.index].vmag.compareTo(stars[b.index].vmag));

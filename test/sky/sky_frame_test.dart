@@ -104,4 +104,27 @@ void main() {
     );
     expect(pickObject(candidates, 500, 350), starId(2061));
   });
+
+  test('with the ground shown, star and constellation names stay above it', () {
+    final low = layoutFrame(
+      scene: scene,
+      field: field,
+      view: SkyView(centerAzDeg: orion.azDeg, centerAltDeg: 0, fovDeg: 120),
+      width: 1000,
+      height: 700,
+      layers: SkyLayers.all,
+    );
+    for (final l in low.labels) {
+      if (l.kind != LabelKind.constellation && l.kind != LabelKind.star) {
+        continue;
+      }
+      final anchor = l.kind == LabelKind.star
+          ? low.projection.unproject(l.rect.left - 4, l.rect.bottom - 7)
+          : low.projection.unproject(
+              (l.rect.left + l.rect.right) / 2,
+              (l.rect.top + l.rect.bottom) / 2,
+            );
+      expect(anchor.z, greaterThan(-0.05), reason: l.text);
+    }
+  });
 }

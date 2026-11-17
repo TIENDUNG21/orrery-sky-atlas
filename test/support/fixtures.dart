@@ -1,0 +1,141 @@
+import 'package:astro/catalog.dart';
+
+Star _star(
+  int hr,
+  int ra,
+  int dec,
+  double vmag,
+  double bv, {
+  int? flamsteed,
+  GreekLetter? bayer,
+  String? constellation,
+  String? name,
+  String spectral = 'A0V',
+}) => Star(
+  hr: hr,
+  raTenthsOfSecond: ra,
+  decArcsec: dec,
+  pmRaMas: 0,
+  pmDecMas: 0,
+  vmag: vmag,
+  bv: bv,
+  parallaxMas: null,
+  designation: StarDesignation(
+    flamsteed: flamsteed,
+    bayer: bayer,
+    constellation: constellation,
+  ),
+  spectralType: spectral,
+  properName: name,
+);
+
+/// A six-star catalogue with real J2000 positions for widget tests.
+SkyCatalog tinyCatalog() => SkyCatalog(
+  stars: [
+    _star(
+      424,
+      91087,
+      321351,
+      2.02,
+      0.60,
+      flamsteed: 1,
+      bayer: GreekLetter.alpha,
+      constellation: 'UMi',
+      name: 'Polaris',
+      spectral: 'F7:Ib-IIv SB',
+    ),
+    _star(
+      1713,
+      188723,
+      -29526,
+      0.12,
+      -0.03,
+      flamsteed: 19,
+      bayer: GreekLetter.beta,
+      constellation: 'Ori',
+      name: 'Rigel',
+      spectral: 'B8Ia:',
+    ),
+    _star(
+      1790,
+      195079,
+      22859,
+      1.64,
+      -0.22,
+      flamsteed: 24,
+      bayer: GreekLetter.gamma,
+      constellation: 'Ori',
+      name: 'Bellatrix',
+    ),
+    _star(
+      2061,
+      213103,
+      26665,
+      0.50,
+      1.85,
+      flamsteed: 58,
+      bayer: GreekLetter.alpha,
+      constellation: 'Ori',
+      name: 'Betelgeuse',
+      spectral: 'M1-2Ia-Iab',
+    ),
+    _star(
+      2491,
+      243089,
+      -60178,
+      -1.46,
+      0.00,
+      flamsteed: 9,
+      bayer: GreekLetter.alpha,
+      constellation: 'CMa',
+      name: 'Sirius',
+      spectral: 'A1Vm',
+    ),
+    _star(
+      7001,
+      670163,
+      139621,
+      0.03,
+      0.00,
+      flamsteed: 3,
+      bayer: GreekLetter.alpha,
+      constellation: 'Lyr',
+      name: 'Vega',
+    ),
+  ],
+  constellations: const [
+    ConstellationInfo(
+      abbr: 'CMa',
+      name: 'Canis Major',
+      genitive: 'Canis Majoris',
+      polylines: [
+        [2491],
+      ],
+    ),
+    ConstellationInfo(
+      abbr: 'Lyr',
+      name: 'Lyra',
+      genitive: 'Lyrae',
+      polylines: [
+        [7001],
+      ],
+    ),
+    ConstellationInfo(
+      abbr: 'Ori',
+      name: 'Orion',
+      genitive: 'Orionis',
+      polylines: [
+        [2061, 1790],
+        [1713],
+      ],
+    ),
+    ConstellationInfo(
+      abbr: 'UMi',
+      name: 'Ursa Minor',
+      genitive: 'Ursae Minoris',
+      polylines: [
+        [424],
+      ],
+    ),
+  ],
+);
