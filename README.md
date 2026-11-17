@@ -9,6 +9,8 @@ Meeus's *Astronomical Algorithms*.
 [![CI](https://github.com/TIENDUNG21/orrery-sky-atlas/actions/workflows/ci.yml/badge.svg)](https://github.com/TIENDUNG21/orrery-sky-atlas/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-e3b341.svg)](LICENSE)
 
+<p align="center"><img src="assets/banner.svg" width="100%" alt="Animated diagram: stars and Orion turning around the celestial pole above Hanoi"></p>
+
 ![The sky over Hanoi at 21:00 on 15 December 2026 with Orion rising in the east and Betelgeuse selected](docs/images/sky-hanoi-orion.png)
 
 Live: <https://tiendung21.github.io/orrery-sky-atlas/>. The screenshot above
