@@ -4,6 +4,7 @@
 /// unless a function's documentation names another source.
 library;
 
+export 'src/bodies/sun.dart';
 export 'src/coords/coordinates.dart';
 export 'src/coords/nutation.dart';
 export 'src/coords/observer.dart';
