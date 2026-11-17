@@ -8,11 +8,14 @@ import 'package:material_ui/material_ui.dart';
 import '../data/catalog_loader.dart';
 import '../data/sky_link.dart';
 import '../format/format.dart';
+import '../search/search_index.dart';
 import '../sky/projection.dart';
 import '../sky/sky_scene.dart';
 import '../state/sky_controller.dart';
+import 'detail_sheet.dart';
 import 'location_sheet.dart';
 import 'night_mode.dart';
+import 'search_sheet.dart';
 import 'sky_canvas.dart';
 import 'theme.dart';
 import 'time_bar.dart';
@@ -112,6 +115,19 @@ class _SkyScreenState extends State<SkyScreen>
   late final Ticker _ticker;
   Duration _lastTick = Duration.zero;
   Timer? _liveTimer;
+  late final SearchIndex _search = SearchIndex.build(widget.catalog);
+
+  void _showDetails(String? id) {
+    if (id == null) return;
+    showDetailSheet(context, _controller, widget.catalog, id);
+  }
+
+  Future<void> _openSearch() async {
+    final id = await showSearchSheet(context, _search);
+    if (id == null || !mounted) return;
+    _controller.focusOn(id);
+    _showDetails(id);
+  }
 
   @override
   void initState() {
@@ -173,7 +189,9 @@ class _SkyScreenState extends State<SkyScreen>
       listenable: _controller,
       builder: (context, _) => Stack(
         children: [
-          Positioned.fill(child: SkyCanvas(controller: _controller)),
+          Positioned.fill(
+            child: SkyCanvas(controller: _controller, onPicked: _showDetails),
+          ),
           Positioned(
             top: 0,
             left: 0,
@@ -182,7 +200,7 @@ class _SkyScreenState extends State<SkyScreen>
               bottom: false,
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: _TopBar(controller: _controller),
+                child: _TopBar(controller: _controller, onSearch: _openSearch),
               ),
             ),
           ),
@@ -218,9 +236,10 @@ class _SkyScreenState extends State<SkyScreen>
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.controller});
+  const _TopBar({required this.controller, required this.onSearch});
 
   final SkyController controller;
+  final VoidCallback onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -257,6 +276,112 @@ class _TopBar extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        const Spacer(),
+        Panel(
+          padding: EdgeInsets.zero,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                tooltip: 'Search',
+                icon: const Icon(Icons.search),
+                onPressed: onSearch,
+              ),
+              _LayersMenu(controller: controller),
+              IconButton(
+                tooltip: 'Night mode',
+                isSelected: NightModeScope.of(context).value,
+                icon: const Icon(Icons.nightlight_outlined),
+                selectedIcon: const Icon(Icons.nightlight),
+                onPressed: NightModeScope.of(context).toggle,
+              ),
+              IconButton(
+                tooltip: 'About and data credits',
+                icon: const Icon(Icons.info_outline),
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => const _AboutDialog(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+enum _Layer { lines, names, labels, grid, ground }
+
+class _LayersMenu extends StatelessWidget {
+  const _LayersMenu({required this.controller});
+
+  final SkyController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = controller.layers;
+    final entries = <(_Layer, String, bool)>[
+      (_Layer.lines, 'Constellation lines', l.constellationLines),
+      (_Layer.names, 'Constellation names', l.constellationNames),
+      (_Layer.labels, 'Star and planet names', l.labels),
+      (_Layer.grid, 'Altitude-azimuth grid', l.grid),
+      (_Layer.ground, 'Ground and horizon', l.ground),
+    ];
+    return PopupMenuButton<_Layer>(
+      tooltip: 'Layers',
+      icon: const Icon(Icons.layers_outlined),
+      onSelected: (layer) => controller.setLayers(switch (layer) {
+        _Layer.lines => l.copyWith(constellationLines: !l.constellationLines),
+        _Layer.names => l.copyWith(constellationNames: !l.constellationNames),
+        _Layer.labels => l.copyWith(labels: !l.labels),
+        _Layer.grid => l.copyWith(grid: !l.grid),
+        _Layer.ground => l.copyWith(ground: !l.ground),
+      }),
+      itemBuilder: (_) => [
+        for (final (layer, label, on) in entries)
+          CheckedPopupMenuItem(value: layer, checked: on, child: Text(label)),
+      ],
+    );
+  }
+}
+
+class _AboutDialog extends StatelessWidget {
+  const _AboutDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    const credits = [
+      'Stars: Yale Bright Star Catalogue, 5th revised edition (Hoffleit and '
+          'Warren, 1991), copy distributed by the Harvard-Smithsonian Center '
+          'for Astrophysics.',
+      'Constellation figures: ConstellationLines by Marc van der Sluys, '
+          'licensed CC BY 4.0, converted to a binary table.',
+      'Algorithms: Jean Meeus, Astronomical Algorithms, 2nd edition (1998). '
+          'Planets from the approximate Keplerian elements of E. M. Standish '
+          '(JPL), valid 1800 to 2050.',
+      'Source code: MIT licence, github.com/TIENDUNG21/orrery-sky-atlas',
+    ];
+    return AlertDialog(
+      title: const Text('Orrery Sky Atlas'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final line in credits)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Text(line),
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
         ),
       ],
     );
