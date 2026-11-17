@@ -93,4 +93,17 @@ void main() {
     expect(c.layers.grid, isFalse);
     expect(notified, 2);
   });
+
+  test('focusing on an object selects it and centres the view', () {
+    final c = make();
+    c.focusOn('hr:2491');
+    final sirius = c.horizontalOf('hr:2491')!;
+    expect(c.selectedId, 'hr:2491');
+    expect(c.view.centerAzDeg, closeTo(sirius.azDeg, 1e-9));
+    expect(c.view.centerAltDeg, closeTo(sirius.altDeg, 1e-9));
+    expect(c.horizontalOf('con:Ori'), isNotNull);
+    expect(c.horizontalOf('moon'), isNotNull);
+    expect(c.horizontalOf('hr:1'), isNull);
+    expect(c.horizontalOf('con:Xyz'), isNull);
+  });
 }

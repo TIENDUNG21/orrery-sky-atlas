@@ -19,6 +19,12 @@ int? hrFromId(String id) =>
 /// Identifier of a planet.
 String planetId(Planet planet) => 'planet:${planet.name}';
 
+/// Identifier of a constellation.
+String constellationId(String abbr) => 'con:$abbr';
+
+/// Abbreviation from a constellation id, or null for other objects.
+String? abbrFromId(String id) => id.startsWith('con:') ? id.substring(4) : null;
+
 /// A solar-system body as seen by the observer.
 class BodyState {
   const BodyState({

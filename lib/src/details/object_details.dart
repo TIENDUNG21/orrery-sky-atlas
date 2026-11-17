@@ -5,7 +5,6 @@ import 'package:astro/catalog.dart';
 
 import '../data/locations.dart';
 import '../format/format.dart';
-import '../search/search_index.dart';
 import '../sky/sky_scene.dart';
 
 class DetailRow {

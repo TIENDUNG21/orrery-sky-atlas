@@ -24,12 +24,6 @@ class SearchResult {
   final double magnitude;
 }
 
-/// Identifier of a constellation.
-String constellationId(String abbr) => 'con:$abbr';
-
-/// Abbreviation from a constellation id, or null for other objects.
-String? abbrFromId(String id) => id.startsWith('con:') ? id.substring(4) : null;
-
 class _Entry {
   _Entry(this.result, this.keys);
 

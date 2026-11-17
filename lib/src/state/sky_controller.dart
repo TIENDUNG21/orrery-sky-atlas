@@ -143,6 +143,43 @@ class SkyController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Where the object with [id] currently appears, or null if unknown.
+  Horizontal? horizontalOf(String id) {
+    final hr = hrFromId(id);
+    if (hr != null) {
+      final index = field.indexOfHr(hr);
+      return index == null
+          ? null
+          : Horizontal.fromVector(scene.starVector(index));
+    }
+    final abbr = abbrFromId(id);
+    if (abbr != null) {
+      for (final (c, centroid) in field.centroids) {
+        if (c.abbr == abbr) {
+          return Horizontal.fromVector(scene.enuOfJ2000(centroid));
+        }
+      }
+      return null;
+    }
+    for (final b in scene.bodies) {
+      if (b.id == id) return b.horizontal;
+    }
+    return null;
+  }
+
+  /// Selects the object and turns the view towards it, even when it is
+  /// below the horizon (the ground is drawn translucent).
+  void focusOn(String id) {
+    final h = horizontalOf(id);
+    if (h != null) {
+      _view = _view.copyWith(
+        centerAzDeg: h.azDeg,
+        centerAltDeg: h.altDeg.clamp(-90.0, 90.0),
+      );
+    }
+    select(id);
+  }
+
   void select(String? id) {
     _selectedId = id;
     notifyListeners();
