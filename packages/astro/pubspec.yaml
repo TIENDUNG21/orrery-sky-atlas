@@ -1,0 +1,11 @@
+name: astro
+description: Positional astronomy in pure Dart (Meeus algorithms) and the Orrery star catalog codec.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.14.0
+
+dev_dependencies:
+  lints: ^6.1.0
+  test: ^1.32.0
