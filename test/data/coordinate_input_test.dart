@@ -37,7 +37,7 @@ void main() {
         closeTo(21 + 1 / 60 + 42.6 / 3600, 1e-9),
       );
       expect(
-        parseCoordinate("105 51 15 E", latitude: false),
+        parseCoordinate('105 51 15 E', latitude: false),
         closeTo(105 + 51 / 60 + 15 / 3600, 1e-9),
       );
     });

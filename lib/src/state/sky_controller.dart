@@ -40,8 +40,14 @@ class SkyController extends ChangeNotifier {
   String? _selectedId;
   SkyScene? _scene;
 
+  double _playSpeed = 0;
+
   /// Simulated seconds per real second while playing; 0 when paused.
-  double playSpeed = 0;
+  double get playSpeed => _playSpeed;
+  set playSpeed(double value) {
+    _playSpeed = value;
+    notifyListeners();
+  }
 
   DateTime get time => _time;
 
@@ -76,7 +82,7 @@ class SkyController extends ChangeNotifier {
   void shiftTime(Duration d) => _setTime(_time.add(d), live: false);
 
   void resetToNow() {
-    playSpeed = 0;
+    _playSpeed = 0;
     _setTime(_clock(), live: true);
   }
 
@@ -87,8 +93,8 @@ class SkyController extends ChangeNotifier {
 
   /// Advances simulated time by [realElapsed] × [playSpeed].
   void advance(Duration realElapsed) {
-    if (playSpeed == 0) return;
-    final ms = (realElapsed.inMicroseconds * playSpeed / 1000).round();
+    if (_playSpeed == 0) return;
+    final ms = (realElapsed.inMicroseconds * _playSpeed / 1000).round();
     _setTime(_time.add(Duration(milliseconds: ms)), live: false);
   }
 

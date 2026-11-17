@@ -272,6 +272,34 @@ SkyFrame layoutFrame({
       place(names[i], LabelKind.compass, p.x - w / 2, p.y - _labelHeight - 2);
     }
   }
+  // First-magnitude stars are named before constellations so that a
+  // constellation label never hides Canopus or Sirius.
+  var starLabels = <ProjectedStar>[];
+  if (layers.labels) {
+    final labelLimit = math.min(
+      lim - 3.0,
+      2.0 + 1.2 * math.log(90 / view.fovDeg) / math.ln2,
+    );
+    starLabels =
+        projectedStars
+            .where(
+              (s) =>
+                  stars[s.index].properName != null &&
+                  stars[s.index].vmag <= labelLimit &&
+                  !(layers.ground && scene.starVector(s.index).z < 0),
+            )
+            .toList()
+          ..sort((a, b) => stars[a.index].vmag.compareTo(stars[b.index].vmag));
+    for (final s in starLabels.where((s) => stars[s.index].vmag <= 1.5)) {
+      place(
+        stars[s.index].properName!,
+        LabelKind.star,
+        s.x + s.radius + 3,
+        s.y - 7,
+      );
+    }
+  }
+
   if (layers.constellationNames) {
     for (final (c, centroid) in field.centroids) {
       final enu = scene.enuOfJ2000(centroid);
@@ -284,21 +312,7 @@ SkyFrame layoutFrame({
     }
   }
   if (layers.labels) {
-    final labelLimit = math.min(
-      lim - 3.0,
-      2.0 + 1.2 * math.log(90 / view.fovDeg) / math.ln2,
-    );
-    final candidates =
-        projectedStars
-            .where(
-              (s) =>
-                  stars[s.index].properName != null &&
-                  stars[s.index].vmag <= labelLimit &&
-                  !(layers.ground && scene.starVector(s.index).z < 0),
-            )
-            .toList()
-          ..sort((a, b) => stars[a.index].vmag.compareTo(stars[b.index].vmag));
-    for (final s in candidates) {
+    for (final s in starLabels.where((s) => stars[s.index].vmag > 1.5)) {
       place(
         stars[s.index].properName!,
         LabelKind.star,
@@ -307,7 +321,6 @@ SkyFrame layoutFrame({
       );
     }
   }
-
   return SkyFrame(
     projection: projection,
     field: field,

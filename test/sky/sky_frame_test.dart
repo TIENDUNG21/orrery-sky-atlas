@@ -127,4 +127,18 @@ void main() {
       expect(anchor.z, greaterThan(-0.05), reason: l.text);
     }
   });
+
+  test('first-magnitude stars are named even where constellations crowd', () {
+    final wide = layoutFrame(
+      scene: scene,
+      field: field,
+      view: const SkyView(centerAzDeg: 110, centerAltDeg: 40, fovDeg: 110),
+      width: 1440,
+      height: 900,
+      layers: SkyLayers.all,
+    );
+    final canopus = catalog.stars.indexWhere((s) => s.properName == 'Canopus');
+    expect(wide.stars.any((s) => s.index == canopus), isTrue);
+    expect(wide.labels.map((l) => l.text), contains('Canopus'));
+  });
 }
