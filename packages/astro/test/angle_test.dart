@@ -19,9 +19,12 @@ void main() {
   });
 
   group('sexagesimal conversion', () {
-    test('hours, minutes, seconds to degrees (Meeus example 21.b, theta Per)', () {
-      expect(hmsToDegrees(2, 44, 11.986), closeTo(41.049942, 1e-6));
-    });
+    test(
+      'hours, minutes, seconds to degrees (Meeus example 21.b, theta Per)',
+      () {
+        expect(hmsToDegrees(2, 44, 11.986), closeTo(41.049942, 1e-6));
+      },
+    );
 
     test('negative declination keeps the sign when degrees are zero', () {
       expect(dmsToDegrees(0, 30, 0, negative: true), closeTo(-0.5, 1e-12));

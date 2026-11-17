@@ -77,10 +77,11 @@ double julianDayFromDateTime(DateTime time) =>
     unixEpochJulianDay + time.toUtc().millisecondsSinceEpoch / _msPerDay;
 
 /// UTC instant for a Julian day, rounded to the millisecond.
-DateTime dateTimeFromJulianDay(double jd) => DateTime.fromMillisecondsSinceEpoch(
-  ((jd - unixEpochJulianDay) * _msPerDay).round(),
-  isUtc: true,
-);
+DateTime dateTimeFromJulianDay(double jd) =>
+    DateTime.fromMillisecondsSinceEpoch(
+      ((jd - unixEpochJulianDay) * _msPerDay).round(),
+      isUtc: true,
+    );
 
 /// Julian centuries of 36525 days since J2000.0.
 double julianCenturies(double jd) => (jd - j2000) / 36525.0;

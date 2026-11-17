@@ -56,10 +56,7 @@ void main() {
 
     test('local DateTime values are converted to UTC first', () {
       final utc = DateTime.utc(2026, 1, 1);
-      expect(
-        julianDayFromDateTime(utc.toLocal()),
-        julianDayFromDateTime(utc),
-      );
+      expect(julianDayFromDateTime(utc.toLocal()), julianDayFromDateTime(utc));
     });
   });
 
@@ -69,10 +66,7 @@ void main() {
     });
 
     test('is continuous at the 2005 polynomial boundary', () {
-      expect(
-        deltaTSeconds(2004.9999),
-        closeTo(deltaTSeconds(2005.0), 0.1),
-      );
+      expect(deltaTSeconds(2004.9999), closeTo(deltaTSeconds(2005.0), 0.1));
     });
 
     test('AstroTime keeps UT and TT apart by deltaT', () {
