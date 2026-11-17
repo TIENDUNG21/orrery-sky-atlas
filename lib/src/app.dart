@@ -25,9 +25,7 @@ class OrreryApp extends StatelessWidget {
           onSurface: OrreryColors.text,
         ),
       ),
-      home: const Scaffold(
-        body: Center(child: Text('Orrery Sky Atlas')),
-      ),
+      home: const Scaffold(body: Center(child: Text('Orrery Sky Atlas'))),
     );
   }
 }
