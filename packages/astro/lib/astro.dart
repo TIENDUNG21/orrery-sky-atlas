@@ -5,3 +5,6 @@
 library;
 
 export 'src/math/angle.dart';
+export 'src/time/astro_time.dart';
+export 'src/time/delta_t.dart';
+export 'src/time/julian.dart';
