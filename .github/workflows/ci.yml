@@ -50,6 +50,9 @@ jobs:
       - name: Build web
         run: flutter build web --release --base-href /orrery-sky-atlas/ --no-web-resources-cdn
 
+      - name: Check web build
+        run: dart run tool/verify_web_build.dart build/web /orrery-sky-atlas/
+
   android-apk:
     name: Build release APK
     needs: check
