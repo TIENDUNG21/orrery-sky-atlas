@@ -14,6 +14,7 @@ export 'src/bodies/sun.dart';
 export 'src/coords/coordinates.dart';
 export 'src/coords/nutation.dart';
 export 'src/coords/observer.dart';
+export 'src/coords/parallax.dart';
 export 'src/coords/precession.dart';
 export 'src/coords/refraction.dart';
 export 'src/coords/transforms.dart';
