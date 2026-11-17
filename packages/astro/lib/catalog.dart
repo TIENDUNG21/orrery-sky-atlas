@@ -3,6 +3,7 @@
 library;
 
 export 'src/catalog/bsc5_parser.dart';
+export 'src/catalog/build.dart';
 export 'src/catalog/codec.dart';
 export 'src/catalog/constellation_lines.dart';
 export 'src/catalog/crc32.dart';
