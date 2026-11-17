@@ -263,21 +263,26 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Flexible(
-          child: Panel(
-            padding: EdgeInsets.zero,
-            child: TextButton.icon(
-              key: const Key('location-button'),
-              onPressed: () => showLocationSheet(context, controller),
-              icon: const Icon(Icons.place_outlined, size: 18),
-              label: Text(
-                controller.location.name,
-                overflow: TextOverflow.ellipsis,
+        // The location takes whatever width the action buttons leave, so a
+        // long place name is ellipsized instead of pushing them off screen.
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Panel(
+              padding: EdgeInsets.zero,
+              child: TextButton.icon(
+                key: const Key('location-button'),
+                onPressed: () => showLocationSheet(context, controller),
+                icon: const Icon(Icons.place_outlined, size: 18),
+                label: Text(
+                  controller.location.name,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
           ),
         ),
-        const Spacer(),
+        const SizedBox(width: 8),
         Panel(
           padding: EdgeInsets.zero,
           child: Row(
@@ -400,17 +405,25 @@ class _ViewInfo extends StatelessWidget {
       color: OrreryColors.muted,
       fontFeatures: const [FontFeature.tabularFigures()],
     );
+    final narrow = MediaQuery.sizeOf(context).width < 520;
+    final az =
+        '${compassPoint(v.centerAzDeg)} '
+        '${normalizeDegrees(v.centerAzDeg).round()}°';
     return Panel(
       padding: const EdgeInsets.only(left: 12),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Facing ${compassPoint(v.centerAzDeg)} '
-            '${normalizeDegrees(v.centerAzDeg).round()}°  ·  '
-            'altitude ${v.centerAltDeg.round()}°  ·  '
-            'field ${v.fovDeg.round()}°',
-            style: style,
+          Flexible(
+            child: Text(
+              narrow
+                  ? '$az  ·  alt ${v.centerAltDeg.round()}°  ·  '
+                        '${v.fovDeg.round()}°'
+                  : 'Facing $az  ·  altitude ${v.centerAltDeg.round()}°  ·  '
+                        'field ${v.fovDeg.round()}°',
+              style: style,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           IconButton(
             tooltip: 'Zoom out',

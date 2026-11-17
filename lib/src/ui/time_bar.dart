@@ -57,6 +57,19 @@ class _TimeBarState extends State<TimeBar> {
     final local = _c.location.localTime(_c.time);
     final minute = local.hour * 60 + local.minute;
     final text = Theme.of(context).textTheme;
+    final narrow = MediaQuery.sizeOf(context).width < 520;
+    final playback = <Widget>[
+      IconButton(
+        tooltip: _c.playSpeed == 0 ? 'Play' : 'Pause',
+        icon: Icon(_c.playSpeed == 0 ? Icons.play_arrow : Icons.pause),
+        onPressed: _togglePlay,
+      ),
+      TextButton(
+        key: const Key('speed-button'),
+        onPressed: _nextSpeed,
+        child: Text(formatSpeed(_speed)),
+      ),
+    ];
     return Panel(
       padding: const EdgeInsets.fromLTRB(12, 6, 6, 4),
       child: Column(
@@ -64,43 +77,51 @@ class _TimeBarState extends State<TimeBar> {
         children: [
           Row(
             children: [
-              Flexible(
-                child: InkWell(
-                  onTap: _pickDate,
-                  borderRadius: BorderRadius.circular(6),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: formatDate(local),
-                            style: text.titleSmall,
-                          ),
-                          TextSpan(
-                            text: '  ${formatClock(local)}',
-                            style: text.titleSmall?.copyWith(
-                              color: OrreryColors.accent,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: InkWell(
+                    onTap: _pickDate,
+                    borderRadius: BorderRadius.circular(6),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: narrow
+                                  ? formatShortDate(local)
+                                  : formatDate(local),
+                              style: text.titleSmall,
                             ),
-                          ),
-                          TextSpan(
-                            text: '  ${formatUtcOffset(_c.location.utcOffset)}',
-                            style: text.bodySmall?.copyWith(
-                              color: OrreryColors.muted,
+                            TextSpan(
+                              text: '  ${formatClock(local)}',
+                              style: text.titleSmall?.copyWith(
+                                color: OrreryColors.accent,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            if (!narrow)
+                              TextSpan(
+                                text:
+                                    '  ${formatUtcOffset(_c.location.utcOffset)}',
+                                style: text.bodySmall?.copyWith(
+                                  color: OrreryColors.muted,
+                                ),
+                              ),
+                          ],
+                        ),
+                        key: const Key('time-label'),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      key: const Key('time-label'),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
               ),
-              const Spacer(),
+              // Phones move playback up so the slider keeps a usable width.
+              if (narrow) ...playback,
               if (_c.isLive)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -149,16 +170,7 @@ class _TimeBarState extends State<TimeBar> {
                 icon: const Icon(Icons.keyboard_double_arrow_right),
                 onPressed: () => _c.shiftTime(const Duration(days: 1)),
               ),
-              IconButton(
-                tooltip: _c.playSpeed == 0 ? 'Play' : 'Pause',
-                icon: Icon(_c.playSpeed == 0 ? Icons.play_arrow : Icons.pause),
-                onPressed: _togglePlay,
-              ),
-              TextButton(
-                key: const Key('speed-button'),
-                onPressed: _nextSpeed,
-                child: Text(formatSpeed(_speed)),
-              ),
+              if (!narrow) ...playback,
             ],
           ),
         ],

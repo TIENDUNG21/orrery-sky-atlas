@@ -23,6 +23,10 @@ String _two(int v) => v.toString().padLeft(2, '0');
 String formatDate(DateTime t) =>
     '${_weekdays[t.weekday - 1]} ${t.day} ${_months[t.month - 1]} ${t.year}';
 
+/// `17 Nov 2026`, for narrow screens.
+String formatShortDate(DateTime t) =>
+    '${t.day} ${_months[t.month - 1]} ${t.year}';
+
 /// `14:30` from the time fields of [t].
 String formatClock(DateTime t) => '${_two(t.hour)}:${_two(t.minute)}';
 

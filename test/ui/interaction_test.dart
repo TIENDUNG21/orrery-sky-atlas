@@ -125,4 +125,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Da Lat'), findsOneWidget);
   });
+
+  for (final width in [360.0, 430.0, 800.0]) {
+    testWidgets('lays out without overflow at $width px wide', (tester) async {
+      tester.view.physicalSize = Size(width, 780);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        OrreryApp(
+          loader: () async => tinyCatalog(),
+          clock: () => _now,
+          link: SkyLink.parse(Uri.parse('/?loc=hcmc')),
+        ),
+      );
+      await tester.pump();
+      // A RenderFlex overflow is reported as an exception and fails here.
+      expect(tester.takeException(), isNull);
+      expect(find.byTooltip('About and data credits'), findsOneWidget);
+      expect(find.byKey(const Key('speed-button')), findsOneWidget);
+    });
+  }
 }

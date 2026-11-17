@@ -60,6 +60,7 @@ void main() {
       expect(formatDate(t), 'Tue 17 Nov 2026');
       expect(formatClock(t), '14:30');
       expect(formatDateTime(t), 'Tue 17 Nov 2026, 14:30');
+      expect(formatShortDate(t), '17 Nov 2026');
     });
 
     test('durations of play speed', () {
