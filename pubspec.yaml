@@ -1,7 +1,7 @@
 name: orrery_sky_atlas
 description: "A pocket planetarium for Android, iOS and the web."
 publish_to: 'none'
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.14.0
