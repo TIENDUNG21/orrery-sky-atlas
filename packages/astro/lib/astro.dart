@@ -4,8 +4,11 @@
 /// unless a function's documentation names another source.
 library;
 
+export 'src/bodies/kepler.dart';
+export 'src/bodies/magnitude.dart';
 export 'src/bodies/moon.dart';
 export 'src/bodies/moon_phase.dart';
+export 'src/bodies/planets.dart';
 export 'src/bodies/sun.dart';
 export 'src/coords/coordinates.dart';
 export 'src/coords/nutation.dart';
