@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:astro/astro.dart';
 import 'package:astro/catalog.dart';
 
+import 'star_style.dart';
+
 /// Kinds of solar-system bodies in the scene.
 enum BodyKind { sun, moon, planet }
 
@@ -53,7 +55,11 @@ class BodyState {
 class StarField {
   StarField(this.catalog)
     : _base = Float64List(catalog.stars.length * 3),
-      _drift = Float64List(catalog.stars.length * 3) {
+      _drift = Float64List(catalog.stars.length * 3),
+      colors = Uint32List(catalog.stars.length),
+      _indexByHr = {
+        for (var i = 0; i < catalog.stars.length; i++) catalog.stars[i].hr: i,
+      } {
     const masToRad = math.pi / 180 / 3600000;
     for (var i = 0; i < catalog.stars.length; i++) {
       final s = catalog.stars[i];
@@ -71,14 +77,39 @@ class StarField {
           east * (s.pmRaMas * masToRad) + north * (s.pmDecMas * masToRad);
       _base.setAll(i * 3, [v.x, v.y, v.z]);
       _drift.setAll(i * 3, [drift.x, drift.y, drift.z]);
+      colors[i] = starColorArgb(s.bv);
     }
+    centroids = [
+      for (final c in catalog.constellations)
+        if (c.polylines.isNotEmpty) (c, _centroid(c)),
+    ];
+  }
+
+  Vec3 _centroid(ConstellationInfo c) {
+    final unique = {for (final line in c.polylines) ...line};
+    var sum = const Vec3(0, 0, 0);
+    for (final hr in unique) {
+      sum = sum + catalog.starByHr(hr)!.j2000.toVector();
+    }
+    return sum.normalized();
   }
 
   final SkyCatalog catalog;
   final Float64List _base;
   final Float64List _drift;
+  final Map<int, int> _indexByHr;
+
+  /// Display colour (ARGB) of each star from its B−V index.
+  final Uint32List colors;
+
+  /// Each constellation with the J2000 direction of its figure's centre,
+  /// where its name is written.
+  late final List<(ConstellationInfo, Vec3)> centroids;
 
   int get length => catalog.stars.length;
+
+  /// Catalogue index of the star with HR number [hr].
+  int? indexOfHr(int hr) => _indexByHr[hr];
 }
 
 /// Everything the painter needs for one instant and place.
