@@ -4,7 +4,9 @@
 /// unless a function's documentation names another source.
 library;
 
+export 'src/coords/nutation.dart';
 export 'src/math/angle.dart';
 export 'src/time/astro_time.dart';
 export 'src/time/delta_t.dart';
 export 'src/time/julian.dart';
+export 'src/time/sidereal.dart';
